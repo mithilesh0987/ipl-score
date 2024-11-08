@@ -40,27 +40,20 @@
             const overs = parseFloat(document.getElementById("overs").value);
             const wickets = parseInt(document.getElementById("wickets").value);
 
-            try {
-                const response = await fetch("/predict", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ team, opponent_team, venue, overs, wickets })
-                });
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ team, opponent_team, venue, overs, wickets })
+            });
 
-                // Log response for debugging
-                const data = await response.json();
-                console.log(data);  // Debugging line
+            const data = await response.json();
 
-                if (data.predicted_score) {
-                    document.getElementById("predictedScore").textContent = data.predicted_score;
-                } else {
-                    document.getElementById("predictedScore").textContent = "Error: " + data.error;
-                }
-            } catch (error) {
-                console.error('Error:', error);  // Debugging line
-                document.getElementById("predictedScore").textContent = "Error: Unable to fetch prediction.";
+            if (data.predicted_score) {
+                document.getElementById("predictedScore").textContent = data.predicted_score;
+            } else {
+                document.getElementById("predictedScore").textContent = "Error: " + data.error;
             }
         });
     </script>
