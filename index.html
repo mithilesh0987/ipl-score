@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Score Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>IPL Score Predictor</h1>
+        <form id="predictForm">
+            <label for="team">Team:</label>
+            <input type="text" id="team" name="team" required><br>
+
+            <label for="opponent_team">Opponent Team:</label>
+            <input type="text" id="opponent_team" name="opponent_team" required><br>
+
+            <label for="venue">Venue:</label>
+            <input type="text" id="venue" name="venue" required><br>
+
+            <label for="overs">Overs Played:</label>
+            <input type="number" id="overs" name="overs" min="0" step="0.1" required><br>
+
+            <label for="wickets">Wickets Taken:</label>
+            <input type="number" id="wickets" name="wickets" min="0" required><br>
+
+            <button type="submit">Predict Score</button>
+        </form>
+        <h3>Predicted Score: <span id="predictedScore">N/A</span></h3>
+    </div>
+
+    <script>
+        document.getElementById("predictForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            
+            const team = document.getElementById("team").value;
+            const opponent_team = document.getElementById("opponent_team").value;
+            const venue = document.getElementById("venue").value;
+            const overs = parseFloat(document.getElementById("overs").value);
+            const wickets = parseInt(document.getElementById("wickets").value);
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ team, opponent_team, venue, overs, wickets })
+            });
+
+            const data = await response.json();
+            if (data.predicted_score) {
+                document.getElementById("predictedScore").textContent = data.predicted_score;
+            } else {
+                document.getElementById("predictedScore").textContent = "Error: " + data.error;
+            }
+        });
+    </script>
+</body>
+</html>
